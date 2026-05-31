@@ -1,0 +1,31 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "BookStore@123"
+      MSSQL_PID: Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "BookStore@123" -C -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  bookstore:
+    build:
+      context: BookStore
+      dockerfile: Dockerfile
+    ports:
+      - "5000:80"
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=BookStoreDB;User Id=sa;Password=BookStore@123;TrustServerCertificate=True;MultipleActiveResultSets=true"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+
+volumes:
+  sqlserver_data:

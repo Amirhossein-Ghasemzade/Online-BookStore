@@ -1,0 +1,82 @@
+@model IEnumerable<BookStore.Models.Book>
+@inject Microsoft.AspNetCore.Identity.SignInManager<Microsoft.AspNetCore.Identity.IdentityUser> SignInManager
+
+@{
+    ViewData["Title"] = "Book Store";
+}
+
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-6">Books</h1>
+    </div>
+</div>
+
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-3">
+        <select name="categorySlug" class="form-select" onchange="this.form.submit()">
+            <option value="">All Categories</option>
+            @foreach (var cat in ViewBag.Categories)
+            {
+                <option value="@cat.Slug" selected="@(ViewBag.CategorySlug == cat.Slug)">@cat.Title</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="authorSlug" class="form-select" onchange="this.form.submit()">
+            <option value="">All Authors</option>
+            @foreach (var auth in ViewBag.Authors)
+            {
+                <option value="@auth.Slug" selected="@(ViewBag.AuthorSlug == auth.Slug)">@auth.FullName</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-4">
+        <input name="keyword" class="form-control" placeholder="Search..." value="@ViewBag.Keyword" />
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Filter</button>
+    </div>
+</form>
+
+<div class="row">
+    @foreach (var book in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">@book.Title</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">@book.Category?.Title</h6>
+                    <p class="card-text">
+                        <strong>Authors:</strong>
+                        @string.Join(", ", book.BookAuthors.Select(ba => ba.Author.FullName))
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a asp-action="Detail" asp-route-slug="@book.Slug" class="btn btn-outline-primary btn-sm">Details</a>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <a asp-action="Download" asp-route-id="@book.Id" class="btn btn-success btn-sm">Download</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (ViewBag.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination justify-content-center">
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-categorySlug="@ViewBag.CategorySlug"
+                       asp-route-authorSlug="@ViewBag.AuthorSlug"
+                       asp-route-keyword="@ViewBag.Keyword"
+                       asp-route-page="@i">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

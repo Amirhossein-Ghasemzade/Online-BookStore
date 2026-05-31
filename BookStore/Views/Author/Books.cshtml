@@ -1,0 +1,30 @@
+@model BookStore.Models.Author
+
+@{
+    ViewData["Title"] = $"Books by {Model.FullName}";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Author" asp-action="Index">Authors</a></li>
+        <li class="breadcrumb-item active">@Model.FullName</li>
+    </ol>
+</nav>
+
+<h1 class="display-6 mb-4">Books by @Model.FullName</h1>
+
+<div class="row">
+    @foreach (var ba in Model.BookAuthors)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">@ba.Book.Title</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">@ba.Book.Category?.Title</h6>
+                    <p class="card-text">@(ba.Book.Description?.Length > 150 ? ba.Book.Description[..150] + "..." : ba.Book.Description)</p>
+                    <a asp-controller="Book" asp-action="Detail" asp-route-slug="@ba.Book.Slug" class="btn btn-outline-primary btn-sm">Details</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

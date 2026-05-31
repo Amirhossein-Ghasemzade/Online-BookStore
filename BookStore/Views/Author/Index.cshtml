@@ -1,0 +1,22 @@
+@model IEnumerable<BookStore.Models.Author>
+
+@{
+    ViewData["Title"] = "Authors";
+}
+
+<h1 class="display-6 mb-4">Authors</h1>
+
+<div class="row">
+    @foreach (var author in Model)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">@author.FullName</h5>
+                    <p class="card-text text-muted">@author.BookAuthors.Count book(s)</p>
+                    <a asp-action="Books" asp-route-slug="@author.Slug" class="btn btn-outline-primary">View Books</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
