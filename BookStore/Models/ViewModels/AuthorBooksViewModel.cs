@@ -1,7 +1,9 @@
+using BookStore.Models.DTOs;
+
 namespace BookStore.Models.ViewModels;
 
 public class AuthorBooksViewModel
 {
-    public Author Author { get; set; } = null!;
-    public List<Book> Books { get; set; } = [];
+    public AuthorInfo Author { get; set; } = null!;
+    public List<BookCardSimple> Books { get; set; } = [];
 }

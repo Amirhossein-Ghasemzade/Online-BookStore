@@ -1,8 +1,10 @@
+using BookStore.Models.DTOs;
+
 namespace BookStore.Models.ViewModels;
 
 public class BookIndexViewModel
 {
-    public List<Book> Books { get; set; } = [];
+    public List<BookCard> Books { get; set; } = [];
     public List<Category> Categories { get; set; } = [];
     public List<Author> Authors { get; set; } = [];
     public string? CategorySlug { get; set; }

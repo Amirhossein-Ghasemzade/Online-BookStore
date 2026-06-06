@@ -1,4 +1,4 @@
-@model IEnumerable<BookStore.Models.Author>
+@model IEnumerable<BookStore.Models.DTOs.AuthorCard>
 
 @{
     ViewData["Title"] = "Authors";
@@ -13,7 +13,7 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">@author.FullName</h5>
-                    <p class="card-text text-muted">@author.BookAuthors.Count book(s)</p>
+                    <p class="card-text text-muted">@author.BookCount book(s)</p>
                     <a asp-action="Books" asp-route-slug="@author.Slug" class="btn btn-outline-primary">View Books</a>
                 </div>
             </div>

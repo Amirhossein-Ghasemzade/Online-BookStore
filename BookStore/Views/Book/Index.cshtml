@@ -45,10 +45,10 @@
             <div class="card h-100 shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">@book.Title</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">@book.Category?.Title</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">@book.CategoryTitle</h6>
                     <p class="card-text">
                         <strong>Authors:</strong>
-                        @string.Join(", ", book.BookAuthors.Select(ba => ba.Author.FullName))
+                        @string.Join(", ", book.AuthorNames)
                     </p>
                     <div class="d-flex justify-content-between align-items-center">
                         <a asp-action="Detail" asp-route-slug="@book.Slug" class="btn btn-outline-primary btn-sm">Details</a>

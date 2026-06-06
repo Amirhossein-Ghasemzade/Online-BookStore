@@ -15,13 +15,13 @@
 <div class="row">
     <div class="col-md-8">
         <h1>@Model.Book.Title</h1>
-        <p class="text-muted">Category: @Model.Book.Category?.Title</p>
+        <p class="text-muted">Category: @Model.Book.CategoryTitle</p>
 
         <h5>Authors</h5>
         <ul>
-            @foreach (var ba in Model.Book.BookAuthors)
+            @foreach (var a in Model.Book.Authors)
             {
-                <li><a asp-controller="Author" asp-action="Books" asp-route-slug="@ba.Author.Slug">@ba.Author.FullName</a></li>
+                <li><a asp-controller="Author" asp-action="Books" asp-route-slug="@a.Slug">@a.FullName</a></li>
             }
         </ul>
 
@@ -41,13 +41,13 @@
     </div>
 
     <div class="col-md-4">
-        @if (Model.Book.BookKeywords.Any())
+        @if (Model.Book.Keywords.Count != 0)
         {
             <h5>Keywords</h5>
             <div>
-                @foreach (var bk in Model.Book.BookKeywords)
+                @foreach (var kw in Model.Book.Keywords)
                 {
-                    <span class="badge bg-secondary me-1">@bk.Keyword.Word</span>
+                    <span class="badge bg-secondary me-1">@kw</span>
                 }
             </div>
         }
@@ -60,7 +60,7 @@
                 {
                     <li class="list-group-item">
                         <a asp-action="Detail" asp-route-slug="@r.Slug">@r.Title</a>
-                        <small class="text-muted d-block">@r.Category?.Title</small>
+                        <small class="text-muted d-block">@r.CategoryTitle</small>
                     </li>
                 }
             </ul>

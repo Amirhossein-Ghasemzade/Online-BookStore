@@ -1,49 +1,29 @@
-using BookStore.Data;
-using BookStore.Models;
-using BookStore.Models.ViewModels;
+using BookStore.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Controllers;
 
 [Authorize]
 public class AuthorController : Controller
 {
-    private readonly AppDbContext _context;
+    private readonly IAuthorService _authorService;
 
-    public AuthorController(AppDbContext context)
+    public AuthorController(IAuthorService authorService)
     {
-        _context = context;
+        _authorService = authorService;
     }
 
     public async Task<IActionResult> Index()
     {
-        var authors = await _context.Authors
-            .Include(a => a.BookAuthors)
-            .ToListAsync();
+        var authors = await _authorService.GetAuthorsAsync();
         return View(authors);
     }
 
     public async Task<IActionResult> Books(string slug)
     {
-        var author = await _context.Authors
-            .FirstOrDefaultAsync(a => a.Slug == slug);
-
-        if (author == null) return NotFound();
-
-        var books = await _context.BookAuthors
-            .Include(ba => ba.Book).ThenInclude(b => b.Category)
-            .Where(ba => ba.AuthorId == author.Id)
-            .Select(ba => ba.Book)
-            .ToListAsync();
-
-        var vm = new AuthorBooksViewModel
-        {
-            Author = author,
-            Books = books
-        };
-
+        var vm = await _authorService.GetAuthorBooksAsync(slug);
+        if (vm == null) return NotFound();
         return View(vm);
     }
 }
