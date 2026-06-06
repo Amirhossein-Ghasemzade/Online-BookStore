@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="d-flex" style="min-height: 100vh;">
+        <nav class="d-flex flex-column p-3 text-white" style="width: 240px; background: rgba(15,15,35,0.98); border-right: 1px solid rgba(255,255,255,0.05);">
+            <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="navbar-brand fs-5 mb-4" style="background: linear-gradient(135deg,#00d4ff,#7b2ff7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Online BookStore</a>
+            <hr class="text-white-50">
+            <ul class="nav flex-column">
+                <li class="nav-item"><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="nav-link text-white-50">Dashboard</a></li>
+                <li class="nav-item"><a asp-area="Admin" asp-controller="Books" asp-action="Index" class="nav-link text-white-50">Books</a></li>
+                <li class="nav-item"><a asp-area="Admin" asp-controller="Categories" asp-action="Index" class="nav-link text-white-50">Categories</a></li>
+                <li class="nav-item"><a asp-area="Admin" asp-controller="Authors" asp-action="Index" class="nav-link text-white-50">Authors</a></li>
+                <li class="nav-item"><a asp-area="Admin" asp-controller="Keywords" asp-action="Index" class="nav-link text-white-50">Keywords</a></li>
+            </ul>
+            <hr class="text-white-50 mt-auto">
+            <a asp-area="" asp-controller="Book" asp-action="Index" class="nav-link text-white-50 small">← Back to site</a>
+        </nav>
+        <main class="flex-grow-1 p-4" style="background: #0f0f23; background: linear-gradient(135deg,#0f0f23 0%,#1a1a3e 50%,#0d0d1a 100%);">
+            @if (TempData["Success"] is string msg)
+            {
+                <div class="alert alert-success alert-dismissible fade show">@msg<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+            }
+            @RenderBody()
+        </main>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

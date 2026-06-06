@@ -1,0 +1,30 @@
+@model IEnumerable<Keyword>
+@{
+    ViewData["Title"] = "Keywords";
+}
+
+<h2 class="mb-4">Keywords</h2>
+
+<form method="post" asp-action="Create" class="row g-2 mb-4">
+    <div class="col-md-4"><input name="word" class="form-control" placeholder="Keyword" required></div>
+    <div class="col-auto"><button class="btn btn-primary">Add</button></div>
+</form>
+
+<table class="table table-dark table-striped align-middle">
+    <thead><tr><th>Word</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var k in Model)
+        {
+            <tr>
+                <form method="post" asp-action="Edit">
+                    <input type="hidden" name="id" value="@k.Id">
+                    <td><input name="word" value="@k.Word" class="form-control form-control-sm"></td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-outline-primary">Save</button>
+                        <button type="submit" formaction="@Url.Action("Delete")" formmethod="post" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete?')">Delete</button>
+                    </td>
+                </form>
+            </tr>
+        }
+    </tbody>
+</table>

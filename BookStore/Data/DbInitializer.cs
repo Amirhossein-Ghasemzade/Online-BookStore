@@ -6,7 +6,7 @@ namespace BookStore.Data
 {
     public static class DbInitializer
     {
-        public static async Task SeedAsync(AppDbContext context, UserManager<IdentityUser> userManager)
+        public static async Task SeedAsync(AppDbContext context, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             await context.Database.EnsureCreatedAsync();
             if (await context.Authors.AnyAsync()) goto CreateUser;
@@ -276,8 +276,13 @@ namespace BookStore.Data
             CreateUser:
             if (!await userManager.Users.AnyAsync())
             {
+                if (!await roleManager.RoleExistsAsync("Admin"))
+                    await roleManager.CreateAsync(new IdentityRole("Admin"));
+
                 var user = new IdentityUser { UserName = "admin@bookstore.com", Email = "admin@bookstore.com" };
-                await userManager.CreateAsync(user, "Admin@123");
+                var result = await userManager.CreateAsync(user, "Admin@123");
+                if (result.Succeeded)
+                    await userManager.AddToRoleAsync(user, "Admin");
             }
         }
     }

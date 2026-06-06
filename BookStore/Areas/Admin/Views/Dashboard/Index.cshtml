@@ -1,0 +1,32 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2 class="mb-4">Dashboard</h2>
+
+<div class="row g-4">
+    <div class="col-md-3">
+        <div class="card text-center p-4">
+            <h3>@ViewBag.BookCount</h3>
+            <p class="text-muted mb-0">Books</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-4">
+            <h3>@ViewBag.AuthorCount</h3>
+            <p class="text-muted mb-0">Authors</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-4">
+            <h3>@ViewBag.CategoryCount</h3>
+            <p class="text-muted mb-0">Categories</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-4">
+            <h3>@ViewBag.KeywordCount</h3>
+            <p class="text-muted mb-0">Keywords</p>
+        </div>
+    </div>
+</div>

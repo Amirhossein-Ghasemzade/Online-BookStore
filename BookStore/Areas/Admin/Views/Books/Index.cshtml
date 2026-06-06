@@ -1,0 +1,60 @@
+@model PaginatedList<Book>
+@{
+    ViewData["Title"] = "Books";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Books</h2>
+    <a asp-action="Create" class="btn btn-primary">+ New Book</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <input name="search" class="form-control" placeholder="Search..." value="@Context.Request.Query["search"]" />
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-outline-primary">Search</button>
+    </div>
+</form>
+
+<table class="table table-dark table-striped align-middle">
+    <thead>
+        <tr><th>Title</th><th>Category</th><th>Pages</th><th></th></tr>
+    </thead>
+    <tbody>
+        @foreach (var b in Model.Items)
+        {
+            <tr>
+                <td>@b.Title</td>
+                <td>@b.Category?.Title</td>
+                <td>@b.PageCount</td>
+                <td class="text-end">
+                    <a asp-action="Edit" asp-route-slug="@b.Slug" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <form method="post" asp-action="Delete" asp-route-id="@b.Id" class="d-inline" onsubmit="return confirm('Delete @b.Title?')">
+                        <button class="btn btn-sm btn-outline-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination justify-content-center">
+            @if (Model.HasPrev)
+            {
+                <li class="page-item"><a class="page-link" asp-all-route-data='new Dictionary<string,string> { {"search",Context.Request.Query["search"]}, {"page",(Model.Page-1)+""} }'>Prev</a></li>
+            }
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i==Model.Page?"active":"")"><a class="page-link" asp-all-route-data='new Dictionary<string,string> { {"search",Context.Request.Query["search"]}, {"page",i+""} }'>@i</a></li>
+            }
+            @if (Model.HasNext)
+            {
+                <li class="page-item"><a class="page-link" asp-all-route-data='new Dictionary<string,string> { {"search",Context.Request.Query["search"]}, {"page",(Model.Page+1)+""} }'>Next</a></li>
+            }
+        </ul>
+    </nav>
+}
