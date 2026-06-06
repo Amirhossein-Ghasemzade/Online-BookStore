@@ -153,7 +153,7 @@ public class AdminService
         if (book == null) return;
 
         _context.BookRelations.RemoveRange(book.RelatedFrom);
-        _context.SaveChanges(); // must save before removing book
+        await _context.SaveChangesAsync(); // must save before removing book
         _context.Books.Remove(book);
         await _context.SaveChangesAsync();
     }

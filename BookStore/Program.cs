@@ -20,6 +20,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString, b => b.MigrationsAssembly("BookStore")));
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -49,15 +50,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Book}/{action=Index}/{id?}")
     .WithStaticAssets();
 
 app.MapRazorPages();
-
-app.MapControllerRoute(
-    name: "areas",
-    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
 
 using (var scope = app.Services.CreateScope())
 {
