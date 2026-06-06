@@ -1,38 +1,38 @@
-@model BookStore.Models.Book
+@model BookStore.Models.ViewModels.BookDetailViewModel
 @inject Microsoft.AspNetCore.Identity.SignInManager<Microsoft.AspNetCore.Identity.IdentityUser> SignInManager
 
 @{
-    ViewData["Title"] = Model.Title;
+    ViewData["Title"] = Model.Book.Title;
 }
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a asp-action="Index">Books</a></li>
-        <li class="breadcrumb-item active">@Model.Title</li>
+        <li class="breadcrumb-item active">@Model.Book.Title</li>
     </ol>
 </nav>
 
 <div class="row">
     <div class="col-md-8">
-        <h1>@Model.Title</h1>
-        <p class="text-muted">Category: @Model.Category?.Title</p>
+        <h1>@Model.Book.Title</h1>
+        <p class="text-muted">Category: @Model.Book.Category?.Title</p>
 
         <h5>Authors</h5>
         <ul>
-            @foreach (var ba in Model.BookAuthors)
+            @foreach (var ba in Model.Book.BookAuthors)
             {
                 <li><a asp-controller="Author" asp-action="Books" asp-route-slug="@ba.Author.Slug">@ba.Author.FullName</a></li>
             }
         </ul>
 
         <h5>Description</h5>
-        <p>@Model.Description</p>
+        <p>@Model.Book.Description</p>
 
-        <p><strong>Pages:</strong> @Model.PageCount</p>
+        <p><strong>Pages:</strong> @Model.Book.PageCount</p>
 
         @if (SignInManager.IsSignedIn(User))
         {
-            <a asp-action="Download" asp-route-id="@Model.Id" class="btn btn-success">Download PDF</a>
+            <a asp-action="Download" asp-route-id="@Model.Book.Id" class="btn btn-success">Download PDF</a>
         }
         else
         {
@@ -41,25 +41,22 @@
     </div>
 
     <div class="col-md-4">
-        @if (Model.BookKeywords.Any())
+        @if (Model.Book.BookKeywords.Any())
         {
             <h5>Keywords</h5>
             <div>
-                @foreach (var bk in Model.BookKeywords)
+                @foreach (var bk in Model.Book.BookKeywords)
                 {
                     <span class="badge bg-secondary me-1">@bk.Keyword.Word</span>
                 }
             </div>
         }
 
-        @{
-            var related = ViewBag.RelatedBooks as List<BookStore.Models.Book>;
-        }
-        @if (related != null && related.Any())
+        @if (Model.RelatedBooks.Count != 0)
         {
             <h5 class="mt-4">Related Books</h5>
             <ul class="list-group">
-                @foreach (var r in related)
+                @foreach (var r in Model.RelatedBooks)
                 {
                     <li class="list-group-item">
                         <a asp-action="Detail" asp-route-slug="@r.Slug">@r.Title</a>

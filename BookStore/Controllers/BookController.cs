@@ -1,5 +1,6 @@
 using BookStore.Data;
 using BookStore.Models;
+using BookStore.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,35 +41,68 @@ public class BookController : Controller
             .Take(pageSize)
             .ToListAsync();
 
-        ViewBag.TotalPages = (int)Math.Ceiling(total / (double)pageSize);
-        ViewBag.CurrentPage = page;
-        ViewBag.CategorySlug = categorySlug;
-        ViewBag.AuthorSlug = authorSlug;
-        ViewBag.Keyword = keyword;
-        ViewBag.Categories = await _context.Categories.ToListAsync();
-        ViewBag.Authors = await _context.Authors.ToListAsync();
+        var vm = new BookIndexViewModel
+        {
+            Books = books,
+            Categories = await _context.Categories.ToListAsync(),
+            Authors = await _context.Authors.ToListAsync(),
+            CategorySlug = categorySlug,
+            AuthorSlug = authorSlug,
+            Keyword = keyword,
+            CurrentPage = page,
+            TotalPages = (int)Math.Ceiling(total / (double)pageSize)
+        };
 
-        return View(books);
+        return View(vm);
     }
 
     public async Task<IActionResult> Detail(string slug)
     {
         var book = await _context.Books
             .Include(b => b.Category)
-            .Include(b => b.BookAuthors).ThenInclude(ba => ba.Author)
-            .Include(b => b.BookKeywords).ThenInclude(bk => bk.Keyword)
-            .Include(b => b.RelatedTo).ThenInclude(r => r.RelatedBook).ThenInclude(b => b.Category)
-            .Include(b => b.RelatedFrom).ThenInclude(r => r.Book).ThenInclude(b => b.Category)
             .FirstOrDefaultAsync(b => b.Slug == slug);
 
         if (book == null) return NotFound();
 
-        var relatedBooks = book.RelatedTo.Select(r => r.RelatedBook)
-            .Concat(book.RelatedFrom.Select(r => r.Book))
-            .Distinct().ToList();
+        var bookAuthors = await _context.BookAuthors
+            .Include(ba => ba.Author)
+            .Where(ba => ba.BookId == book.Id)
+            .ToListAsync();
 
-        ViewBag.RelatedBooks = relatedBooks;
-        return View(book);
+        var bookKeywords = await _context.BookKeywords
+            .Include(bk => bk.Keyword)
+            .Where(bk => bk.BookId == book.Id)
+            .ToListAsync();
+
+        var relatedToIds = await _context.BookRelations
+            .Where(r => r.BookId == book.Id)
+            .Select(r => r.RelatedBookId)
+            .ToListAsync();
+
+        var relatedFromIds = await _context.BookRelations
+            .Where(r => r.RelatedBookId == book.Id)
+            .Select(r => r.BookId)
+            .ToListAsync();
+
+        var allRelatedIds = relatedToIds.Concat(relatedFromIds).Distinct().ToList();
+
+        var relatedBooks = allRelatedIds.Count != 0
+            ? await _context.Books
+                .Include(b => b.Category)
+                .Where(b => allRelatedIds.Contains(b.Id))
+                .ToListAsync()
+            : [];
+
+        book.BookAuthors = bookAuthors;
+        book.BookKeywords = bookKeywords;
+
+        var vm = new BookDetailViewModel
+        {
+            Book = book,
+            RelatedBooks = relatedBooks
+        };
+
+        return View(vm);
     }
 
     public async Task<IActionResult> Download(int id)

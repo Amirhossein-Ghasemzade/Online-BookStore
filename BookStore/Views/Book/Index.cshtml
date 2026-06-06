@@ -1,4 +1,4 @@
-@model IEnumerable<BookStore.Models.Book>
+@model BookStore.Models.ViewModels.BookIndexViewModel
 @inject Microsoft.AspNetCore.Identity.SignInManager<Microsoft.AspNetCore.Identity.IdentityUser> SignInManager
 
 @{
@@ -15,23 +15,23 @@
     <div class="col-md-3">
         <select name="categorySlug" class="form-select" onchange="this.form.submit()">
             <option value="">All Categories</option>
-            @foreach (var cat in ViewBag.Categories)
+            @foreach (var cat in Model.Categories)
             {
-                <option value="@cat.Slug" selected="@(ViewBag.CategorySlug == cat.Slug)">@cat.Title</option>
+                <option value="@cat.Slug" selected="@(Model.CategorySlug == cat.Slug)">@cat.Title</option>
             }
         </select>
     </div>
     <div class="col-md-3">
         <select name="authorSlug" class="form-select" onchange="this.form.submit()">
             <option value="">All Authors</option>
-            @foreach (var auth in ViewBag.Authors)
+            @foreach (var auth in Model.Authors)
             {
-                <option value="@auth.Slug" selected="@(ViewBag.AuthorSlug == auth.Slug)">@auth.FullName</option>
+                <option value="@auth.Slug" selected="@(Model.AuthorSlug == auth.Slug)">@auth.FullName</option>
             }
         </select>
     </div>
     <div class="col-md-4">
-        <input name="keyword" class="form-control" placeholder="Search..." value="@ViewBag.Keyword" />
+        <input name="keyword" class="form-control" placeholder="Search..." value="@Model.Keyword" />
     </div>
     <div class="col-md-2">
         <button type="submit" class="btn btn-primary w-100">Filter</button>
@@ -39,7 +39,7 @@
 </form>
 
 <div class="row">
-    @foreach (var book in Model)
+    @foreach (var book in Model.Books)
     {
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
@@ -63,17 +63,17 @@
     }
 </div>
 
-@if (ViewBag.TotalPages > 1)
+@if (Model.TotalPages > 1)
 {
     <nav>
         <ul class="pagination justify-content-center">
-            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            @for (int i = 1; i <= Model.TotalPages; i++)
             {
-                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
                     <a class="page-link" asp-action="Index"
-                       asp-route-categorySlug="@ViewBag.CategorySlug"
-                       asp-route-authorSlug="@ViewBag.AuthorSlug"
-                       asp-route-keyword="@ViewBag.Keyword"
+                       asp-route-categorySlug="@Model.CategorySlug"
+                       asp-route-authorSlug="@Model.AuthorSlug"
+                       asp-route-keyword="@Model.Keyword"
                        asp-route-page="@i">@i</a>
                 </li>
             }

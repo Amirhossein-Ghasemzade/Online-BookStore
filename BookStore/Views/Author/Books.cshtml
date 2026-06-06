@@ -1,28 +1,28 @@
-@model BookStore.Models.Author
+@model BookStore.Models.ViewModels.AuthorBooksViewModel
 
 @{
-    ViewData["Title"] = $"Books by {Model.FullName}";
+    ViewData["Title"] = $"Books by {Model.Author.FullName}";
 }
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a asp-controller="Author" asp-action="Index">Authors</a></li>
-        <li class="breadcrumb-item active">@Model.FullName</li>
+        <li class="breadcrumb-item active">@Model.Author.FullName</li>
     </ol>
 </nav>
 
-<h1 class="display-6 mb-4">Books by @Model.FullName</h1>
+<h1 class="display-6 mb-4">Books by @Model.Author.FullName</h1>
 
 <div class="row">
-    @foreach (var ba in Model.BookAuthors)
+    @foreach (var book in Model.Books)
     {
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">@ba.Book.Title</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">@ba.Book.Category?.Title</h6>
-                    <p class="card-text">@(ba.Book.Description?.Length > 150 ? ba.Book.Description[..150] + "..." : ba.Book.Description)</p>
-                    <a asp-controller="Book" asp-action="Detail" asp-route-slug="@ba.Book.Slug" class="btn btn-outline-primary btn-sm">Details</a>
+                    <h5 class="card-title">@book.Title</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">@book.Category?.Title</h6>
+                    <p class="card-text">@(book.Description?.Length > 150 ? book.Description[..150] + "..." : book.Description)</p>
+                    <a asp-controller="Book" asp-action="Detail" asp-route-slug="@book.Slug" class="btn btn-outline-primary btn-sm">Details</a>
                 </div>
             </div>
         </div>

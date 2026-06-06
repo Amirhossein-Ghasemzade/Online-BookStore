@@ -1,4 +1,6 @@
 using BookStore.Data;
+using BookStore.Models;
+using BookStore.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +20,7 @@ public class AuthorController : Controller
     public async Task<IActionResult> Index()
     {
         var authors = await _context.Authors
-            .Include(a => a.BookAuthors).ThenInclude(ba => ba.Book)
+            .Include(a => a.BookAuthors)
             .ToListAsync();
         return View(authors);
     }
@@ -26,11 +28,22 @@ public class AuthorController : Controller
     public async Task<IActionResult> Books(string slug)
     {
         var author = await _context.Authors
-            .Include(a => a.BookAuthors).ThenInclude(ba => ba.Book).ThenInclude(b => b.Category)
             .FirstOrDefaultAsync(a => a.Slug == slug);
 
         if (author == null) return NotFound();
 
-        return View(author);
+        var books = await _context.BookAuthors
+            .Include(ba => ba.Book).ThenInclude(b => b.Category)
+            .Where(ba => ba.AuthorId == author.Id)
+            .Select(ba => ba.Book)
+            .ToListAsync();
+
+        var vm = new AuthorBooksViewModel
+        {
+            Author = author,
+            Books = books
+        };
+
+        return View(vm);
     }
 }
